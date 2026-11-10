@@ -5,6 +5,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
     steps:
       - uses: actions/checkout@v4
         with:
@@ -13,13 +16,12 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - uses: android-actions/setup-android@v3
-      - name: Accept licenses and install SDK
+      - name: Accept SDK licenses
         run: |
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager "platform-tools" >/dev/null 2>&1 || true
-          sdkmanager "platforms;android-37" "build-tools;37.0.0" >/dev/null 2>&1 || true
+          set +e
+          yes | sdkmanager --licenses >/dev/null 2>&1
           sdkmanager --list_installed || true
+          exit 0
       - name: Build release APK
         run: |
           chmod +x gradlew
