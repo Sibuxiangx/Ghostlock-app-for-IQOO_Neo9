@@ -20,7 +20,6 @@ jobs:
         run: |
           set +e
           yes | sdkmanager --licenses >/dev/null 2>&1
-          sdkmanager --list_installed || true
           exit 0
       - name: Add Android Rust target
         run: rustup target add aarch64-linux-android
@@ -28,8 +27,12 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew :app:assembleRelease --no-daemon --stacktrace
+      - name: Locate APK
+        run: find . -name "*.apk" -not -path "*/intermediates/*" | head -50
       - uses: actions/upload-artifact@v4
         with:
           name: ghostlock-apk
-          path: app/build/outputs/apk/**/*.apk
+          path: |
+            **/*.apk
+            !**/intermediates/**
           if-no-files-found: error
