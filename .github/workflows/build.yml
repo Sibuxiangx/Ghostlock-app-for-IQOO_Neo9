@@ -22,6 +22,8 @@ jobs:
           yes | sdkmanager --licenses >/dev/null 2>&1
           sdkmanager --list_installed || true
           exit 0
+      - name: Add Android Rust target
+        run: rustup target add aarch64-linux-android
       - name: Build release APK
         run: |
           chmod +x gradlew
